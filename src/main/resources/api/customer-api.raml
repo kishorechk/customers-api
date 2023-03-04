@@ -1,0 +1,79 @@
+#%RAML 1.0
+title: Fuank Customer API
+description: Store and Retrive the customer data from the resellers.
+securedBy: basicAuth
+securitySchemes:
+  basicAuth:
+      description: Each request must contain the headers necessary for
+                   basic authentication
+      type: Basic Authentication
+      describedBy:
+        headers:
+          Authorization:
+            description: Used to send the Base64 encoded "username:password"
+                         credentials
+            type: string
+        responses:
+          401:
+            description: |
+              Unauthorized. Either the provided username and password
+              combination is invalid, or the user is not allowed to access
+              the content provided by the requested URL.
+uses:
+  myTypes:   libs/types.raml
+traits:
+/customers:
+  get:
+    description: List all customer matching query criteria, if provided;
+                 otherwise list all customers
+    queryParameters:
+      name?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: myTypes.Customer[]
+            example: !include examples/Customers.json
+  post:
+    description: Create a new customer
+    body:
+      application/json:
+        type: myTypes.CustomerNew
+        example: !include examples/CustomerNew.json
+    responses:
+      201:
+        body:
+          application/json:
+            type: myTypes.Customer
+            example: !include examples/Customer.json
+  /{customerId}:
+    get:
+      description: Get a customer by customerId
+      responses:
+        200:
+          body:
+            application/json:
+              type: myTypes.Customer
+              example: !include examples/Customer.json
+        404:
+          body:
+            application/json:
+              type: myTypes.Error
+              example: !include examples/Error.json
+    put:
+      description: Update a customer by customerId
+      body:
+        application/json:
+          type: myTypes.Customer
+          example: !include examples/Customer.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: myTypes.Customer
+              example: !include examples/Customer.json
+        404:
+          body:
+            application/json:
+              type: myTypes.Error
+              example: !include examples/Error.json

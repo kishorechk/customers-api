@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:azure-cosmos-db-connector-mule-4="http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4 http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4/current/mule-azure-cosmos-db-connector-mule-4.xsd
+	http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<azure-cosmos-db-connector-mule-4:key-token-config
+		name="Azure_Cosmos_Db_Key_Token_Config"
+		doc:name="Azure Cosmos Db Key Token Config"
+		doc:id="49e30c52-0397-4e08-bbc4-0d2e78bb67c0">
+		<azure-cosmos-db-connector-mule-4:key-token-auth-connection
+			baseUri="${cosmosdb.baseuri}" key="${secure::cosmosdb.key}"
+			version="2018-12-31" />
+	</azure-cosmos-db-connector-mule-4:key-token-config>
+	<salesforce:sfdc-config name="Salesforce_Config"
+		doc:name="Salesforce Config"
+		doc:id="22595931-bcf2-403e-81f9-4b7733dee840">
+		<salesforce:basic-connection
+			username="${salesforce.username}"
+			password="${secure::salesforce.password}"
+			securityToken="${secure::salesforce.token}" />
+	</salesforce:sfdc-config>
+	<global-property doc:name="Global Property"
+		doc:id="097ee538-44fb-4db2-a971-9cb46612dcec" name="mule.env"
+		value="dev" />
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="f187db2a-0ad7-480c-ad78-f7cad8efbea5" file="config-dev.yaml" />
+	<secure-properties:config
+		name="Secure_Properties_Config" doc:name="Secure Properties Config"
+		doc:id="0ac57a81-cf42-4bcd-beb7-ebfc7c7f741c" key="changeit12345678"
+		file="secure-config-dev.yaml">
+		<secure-properties:encrypt
+			algorithm="Blowfish" />
+	</secure-properties:config>
+</mule>

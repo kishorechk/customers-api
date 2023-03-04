@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="customer-api-test-suite.xml" />
+	<munit:test
+		name="update-customer-success-test"
+		doc:id="48141d7e-862b-4075-8d2b-5a602efbd36f" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when Put Salesforce" doc:id="6f49aba7-b117-4383-a76a-209a353a4a43" processor="salesforce:update">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Update" attributeName="doc:name" />
+				<munit-tools:with-attribute whereValue="a9cc9673-3343-4de7-8099-5e139efc8e1e" attributeName="doc:id" />
+				<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{successful : true }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when Put CosmosDB" doc:id="271544e0-f01b-45d1-ae2e-33a0e16fbfc7" processor="azure-cosmos-db-connector-mule-4:replace-document">
+			<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="Replace Document" attributeName="doc:name" />
+					<munit-tools:with-attribute
+						whereValue="0c09ecb7-7abd-4150-9f3e-9454496c3aae"
+						attributeName="doc:id" />
+					<munit-tools:with-attribute
+						whereValue="Azure_Cosmos_Db_Key_Token_Config"
+						attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{attributes : { statusCode: 200} }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event">
+				<munit:payload
+					value="#[MunitTools::getResourceAsString('${munit.examples-path}/Customer_PUT_Request_Example.json')]"
+					encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes
+					value="#[{headers: {Authorization: 'username:password'}, uriParams: {'customerId': 'cust1'}}]" />
+			</munit:set-event>
+			<flow-ref
+				doc:name="Flow-ref to put:\customers\(customerId):application\json:customer-api-config"
+				doc:id="66841c64-dfd9-4439-9805-782bf6915b89"
+				name="put:\customers\(customerId):application\json:customer-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that
+				doc:name="Assert Payload Not Null"
+				doc:id="bac34593-35a4-48ff-88d2-277677039768"
+				expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="45fd76cc-13e1-431c-b636-ffe34aacc844" actual="#[payload.message]" expected="#['Customer details updated successfully']"/>	
+		</munit:validation>
+	</munit:test>
+	<munit:test
+		name="update-customer-failed-test"
+		doc:id="bffeb178-f9c5-495c-8fa0-bb7d26cc5683" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when Put Salesforce" doc:id="c629e5a9-8079-4715-8ca6-61439bfef80b" processor="salesforce:update">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Update" attributeName="doc:name" />
+				<munit-tools:with-attribute whereValue="a9cc9673-3343-4de7-8099-5e139efc8e1e" attributeName="doc:id" />
+				<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{successful : false }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when Put CosmosDB" doc:id="5f76d159-4016-4b33-9214-8976d0ea265c" processor="azure-cosmos-db-connector-mule-4:replace-document">
+			<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="Replace Document" attributeName="doc:name" />
+					<munit-tools:with-attribute
+						whereValue="0c09ecb7-7abd-4150-9f3e-9454496c3aae"
+						attributeName="doc:id" />
+					<munit-tools:with-attribute
+						whereValue="Azure_Cosmos_Db_Key_Token_Config"
+						attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{attributes : { statusCode: 200} }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event">
+				<munit:payload
+					value="#[MunitTools::getResourceAsString('${munit.examples-path}/Customer_PUT_Request_Example.json')]"
+					encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes
+					value="#[{headers: {Authorization: 'username:password'}, uriParams: {'customerId': 'cust1'}}]" />
+			</munit:set-event>
+			<flow-ref
+				doc:name="Flow-ref to put:\customers\(customerId):application\json:customer-api-config"
+				doc:id="28d22070-1e67-4ad2-891e-03697e8bdf7c"
+				name="put:\customers\(customerId):application\json:customer-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that
+				doc:name="Assert Payload Not Null"
+				doc:id="808b1b41-eae7-4e7c-bde3-f00357905f0c"
+				expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="dc11ce71-79f9-4767-a95f-4c60fbe60f41" actual="#[payload.message]" expected="#['Unable to update Customer details']"/>	
+		</munit:validation>
+	</munit:test>
+	<munit:test
+		name="query-customers-test"
+		doc:id="89186666-700d-488a-a693-04643a708cb0" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when
+				doc:name="Mock when List Cosmosdb"
+				doc:id="65711a61-5b88-4c2d-bf03-f2a4d912f3b8"
+				processor="azure-cosmos-db-connector-mule-4:list-documents">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="List Documents" attributeName="doc:name" />
+					<munit-tools:with-attribute
+						whereValue="778fff23-e3e6-4691-a480-8a3e6f94907c"
+						attributeName="doc:id" />
+					<munit-tools:with-attribute
+						whereValue="Azure_Cosmos_Db_Key_Token_Config"
+						attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[[{&#10;      "id": "2c68790e-5dcb-4537-a70e-6b3d7672a76b",&#10;      "customerId": "2c68790e-5dcb-4537-a70e-6b3d7672a76b",&#10;      "personalInformation": {&#10;        "firstName": "Baby",&#10;        "lastName": "Liya",&#10;        "companyName": "LiyaCorp",&#10;        "email": "info@liyacorp.com",&#10;        "phone": "98989898"&#10;      },&#10;      "address": null,&#10;      "_rid": "AKp5ALvldN8JAAAAAAAAAA==",&#10;      "_self": "dbs/AKp5AA==/colls/AKp5ALvldN8=/docs/AKp5ALvldN8JAAAAAAAAAA==/",&#10;      "_etag": "\"07002f28-0000-0700-0000-6360291e0000\"",&#10;      "_attachments": "attachments/",&#10;      "_ts": 1667246366&#10;    }]]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+				<munit:set-event doc:name="Set Event">
+			<munit:attributes value="#[{headers: {Authorization: 'username:password'}}]" />
+		</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\customers:customer-api-config" doc:id="94878178-2f67-4f1f-b385-e7f6613f8f24" name="get:\customers:customer-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert Pyaload isNotNull" doc:id="98b245e9-8a6a-4114-bd10-8739305b25cd" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert Response Payload MediaType" expression="#[payload]" message="Get Customers response payload's media type does not match" is="#[MunitTools::withMediaType('application/json')]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="query-customer-by-cutomer-id-test" doc:id="b7bbb9c4-b548-4118-9a2e-49fa6d80835f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Get Cosmosdb" doc:id="08d4bf2e-abf7-4fd5-ba77-b95d2243b212" processor="azure-cosmos-db-connector-mule-4:get-document">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get Document" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="e4de4616-2ebd-4230-a760-cb8b8f9ac1ef" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Azure_Cosmos_Db_Key_Token_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[{&#10;      "id": "2c68790e-5dcb-4537-a70e-6b3d7672a76b",&#10;      "customerId": "2c68790e-5dcb-4537-a70e-6b3d7672a76b",&#10;      "personalInformation": {&#10;        "firstName": "Baby",&#10;        "lastName": "Liya",&#10;        "companyName": "LiyaCorp",&#10;        "email": "info@liyacorp.com",&#10;        "phone": "98989898"&#10;      },&#10;      "address": null,&#10;      "_rid": "AKp5ALvldN8JAAAAAAAAAA==",&#10;      "_self": "dbs/AKp5AA==/colls/AKp5ALvldN8=/docs/AKp5ALvldN8JAAAAAAAAAA==/",&#10;      "_etag": "\"07002f28-0000-0700-0000-6360291e0000\"",&#10;      "_attachments": "attachments/",&#10;      "_ts": 1667246366&#10;    }]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			
+		</munit:behavior>
+		<munit:execution >
+		<munit:set-event doc:name="Set Event">
+			<munit:attributes value="#[{headers: {Authorization: 'username:password'},queryParams: {customerId: '4d4de7d6-7f5e-4778-9c70-babba6c25c55'} }]" />
+		</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\customers\(customerId):customer-api-config" doc:id="2c6f62fe-e5bf-494b-86ab-623be87f497a" name="get:\customers\(customerId):customer-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert Pyaload isNotNull" doc:id="b8976fc0-4225-48c7-9dbc-c1f233918557" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert Response Payload MediaType" expression="#[payload]" message="Get Customer by Id response payload's media type does not match" is="#[MunitTools::withMediaType('application/json')]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="create-customer-success-test" doc:id="d67853a4-647b-4ea2-a171-ef9fe2879885" description="Create customer success response from both CosmosDB and Salesforce">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Post Salesforce" doc:id="4618e046-16da-4b7c-aa15-05736c3221a9" processor="salesforce:create">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Create" attributeName="doc:name" />
+				<munit-tools:with-attribute whereValue="ac446097-874a-4a6b-b039-ff59a756842f" attributeName="doc:id" />
+				<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{successful : true }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when Post CosmosDB" doc:id="1940d14d-b475-4934-b0a0-2ac87bf88a0d" processor="azure-cosmos-db-connector-mule-4:create-document">
+			<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="Create Document" attributeName="doc:name" />
+					<munit-tools:with-attribute
+						whereValue="48f4b3d7-f57c-410c-b7b9-042340e4d4bc"
+						attributeName="doc:id" />
+					<munit-tools:with-attribute
+						whereValue="Azure_Cosmos_Db_Key_Token_Config"
+						attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{attributes : { statusCode: 201} }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+		<munit:set-event doc:name="Set Event">
+			<munit:payload value="#[MunitTools::getResourceAsString('${munit.examples-path}/Customer_POST_Request_Example.json')]" encoding="UTF-8" mediaType="application/json" />
+			<munit:attributes value="#[{headers: {Authorization: 'username:password'}}]" />
+		</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\customers:application\json:customer-api-config" doc:id="47467476-ee70-4580-99e2-8a3136634264" name="post:\customers:application\json:customer-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert Response Payload is Not Null" doc:id="3d780042-6e27-4f01-ae76-b441d8ebdd1f" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="9ed71551-4dc2-4d64-88ed-d13e813e1484" actual="#[payload.message]" expected="#['Customer details created successfully']"/>
+		</munit:validation>
+	</munit:test>
+<munit:test name="create-customer-failed-test" doc:id="8886f8f9-303e-42e2-99f7-5276daff1136" description="Create customer failed in Salesforce">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Post Salesforce" doc:id="ca6e5fce-a273-40f3-bc44-ace9bbb21869" processor="salesforce:create">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Create" attributeName="doc:name" />
+				<munit-tools:with-attribute whereValue="ac446097-874a-4a6b-b039-ff59a756842f" attributeName="doc:id" />
+				<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{successful : false }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when Post CosmosDB" doc:id="636c7466-edf7-446a-b83f-547bd4d04991" processor="azure-cosmos-db-connector-mule-4:create-document">
+			<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="Create Document" attributeName="doc:name" />
+					<munit-tools:with-attribute
+						whereValue="48f4b3d7-f57c-410c-b7b9-042340e4d4bc"
+						attributeName="doc:id" />
+					<munit-tools:with-attribute
+						whereValue="Azure_Cosmos_Db_Key_Token_Config"
+						attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{attributes : { statusCode: 201} }]" mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+		<munit:set-event doc:name="Set Event">
+			<munit:payload value="#[MunitTools::getResourceAsString('${munit.examples-path}/Customer_POST_Request_Example.json')]" encoding="UTF-8" mediaType="application/json" />
+			<munit:attributes value="#[{headers: {Authorization: 'username:password'}}]" />
+		</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\customers:application\json:customer-api-config" doc:id="e74596c1-f4d0-45a0-b76b-462733b0c4f8" name="post:\customers:application\json:customer-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert Response Payload is Not Null" doc:id="1f97f5e7-015b-497e-b0d8-28a8eb2ff484" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="a13c5a1e-9857-4568-90a0-d3577860fdff" actual="#[payload.message]" expected="#['Unable to create Customer details']"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

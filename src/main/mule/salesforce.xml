@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="salesforce-put-customer-by-id"
+		doc:id="6a986dff-fe80-439e-836a-9b01a66de50b">
+		<logger level="INFO" doc:name="Updating customer"
+			doc:id="46e4f2b2-d849-4eab-b2f2-fab2c7846464"
+			message='#["Updating Customer with ID " ++ (vars.customerId default "") ++ " in Salesforce"]' />
+		<ee:transform doc:name="Set request payload"
+			doc:id="a4202514-bd8e-4984-b5d1-41543ec521e6">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/salesforce/put-customers-by-id-request-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:update doc:name="Update"
+			doc:id="a9cc9673-3343-4de7-8099-5e139efc8e1e"
+			config-ref="Salesforce_Config" type="Account" />
+		<logger level="INFO" doc:name="Customer updated"
+			doc:id="3395c71d-4303-4984-b6ea-35242f71ac32"
+			message='#["Customer with ID " ++ (vars.customerId default "") ++ " updated in CosmosDB successfully"]' />
+	</flow>
+	<flow name="salesforce-post-customer"
+		doc:id="1b009059-f2f1-4be0-a84f-17f99e714cad">
+		<logger level="INFO" doc:name="Creating Customer"
+			doc:id="d449d7e5-ff01-4273-ba6c-29466983de53"
+			message='#["Creating new Customer with ID " ++ (vars.customerId default "") ++ " in Salesforce"]' />
+		<ee:transform doc:name="Set request payload"
+			doc:id="586cb044-f785-4d4a-8a7a-0c85d1c87fa1">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/salesforce/post-customer-request-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Account" doc:name="Create" doc:id="ac446097-874a-4a6b-b039-ff59a756842f" config-ref="Salesforce_Config">
+			<reconnect />
+		</salesforce:create>
+		<logger level="INFO" doc:name="Customer Created"
+			doc:id="a56e289a-ee42-4966-a4c1-10620d6c3a43"
+			message='#["Customer with ID " ++ (vars.customerId default "") ++ " created in Salesforce successfully"]' />
+	</flow>
+</mule>

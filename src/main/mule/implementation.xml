@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-customers-flow"
+		doc:id="b7a16f86-f2e7-42da-983a-c20c627153aa">
+		<flow-ref doc:name="Flow Reference"
+			doc:id="58355519-866c-4063-ac6d-fa8aa5ebbcab"
+			name="cosmosdb-get-customers" />
+	</flow>
+	<flow name="get-customer-by-id-flow"
+		doc:id="3b7ac784-6cbd-4142-b0ef-64d300bf9f9a">
+		<flow-ref doc:name="Flow Reference"
+			doc:id="135559f3-b567-47b4-9b6a-9dadaf5693ad"
+			name="cosmosdb-get-customer-by-id" />
+	</flow>
+	<flow name="put-customer-by-id-flow"
+		doc:id="bc7391e0-68aa-4d2c-a623-824c6c448613">
+		<scatter-gather doc:name="Scatter-Gather"
+			doc:id="862d0bea-bb75-4e53-a074-1e074c9ea677">
+			<route>
+				<flow-ref doc:name="Flow Reference"
+					doc:id="64fc157b-22ee-45a7-9d6e-374377c31834"
+					name="salesforce-put-customer-by-id" />
+
+			</route>
+			<route>
+				<flow-ref doc:name="Flow Reference"
+					doc:id="36ff3821-14fe-4846-a4b6-3dc1e95a10c7"
+					name="cosmosdb-put-customers-by-id" />
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Set response payload"
+			doc:id="8f5c0d38-02b1-4b20-8b77-a848cda16c8e">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/put-customer-by-id-response-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="post-customers-flow"
+		doc:id="8d502133-a13e-48d7-8edc-062cdd753da7">
+		<set-variable value="#[uuid()]" doc:name="customerId"
+			doc:id="6cf5c82d-a2af-4a00-a5f5-b212b74b79c8"
+			variableName="customerId" />
+		<scatter-gather doc:name="Scatter-Gather"
+			doc:id="f4eff1fd-4aa9-4ed1-982d-a66ec845ce7f">
+			<route>
+				<flow-ref doc:name="Flow Reference"
+					doc:id="5c52393e-7af8-4f3b-b2e7-2a233f71bbb5"
+					name="salesforce-post-customer" />
+			</route>
+			<route>
+				<flow-ref doc:name="Flow Reference"
+					doc:id="61e9d5a0-257c-4ae6-a781-9f5704a9c826"
+					name="cosmosdb-post-customers" />
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Set response payload"
+			doc:id="2cd97d10-9aca-4008-8f1c-413ea35d7207">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/post-customer-response-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

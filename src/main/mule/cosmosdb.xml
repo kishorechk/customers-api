@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:azure-cosmos-db-connector-mule-4="http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4 http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4/current/mule-azure-cosmos-db-connector-mule-4.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	<flow name="cosmosdb-get-customers"
+		doc:id="60e28327-24b1-4eec-924e-407de6d9e00d">
+		<azure-cosmos-db-connector-mule-4:list-documents
+			doc:name="List Documents"
+			doc:id="778fff23-e3e6-4691-a480-8a3e6f94907c"
+			config-ref="Azure_Cosmos_Db_Key_Token_Config"
+			dbIdUriParam="knauf-mule-dev-task" collIdUriParam="Container1" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="ec3ae321-e445-4217-a50c-7002deed1bee">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/get-customers-response-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="cosmosdb-get-customer-by-id"
+		doc:id="bf29dba8-db4e-46ff-9644-e9917ffb63c4">
+		<logger level="INFO" doc:name="Retrieving Customer"
+			doc:id="d8c55004-ae32-424c-a226-9ed6ef86157e"
+			message='#["Retrieving Customer with ID " ++ (attributes.uriParams.customerId default "") ++ " from CosmosDB"]' />
+		<ee:transform doc:name="Set request payload"
+			doc:id="64f2e3d1-0450-42db-bb67-327c874e96a4">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/cosmosdb/get-customer-by-id-request-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<azure-cosmos-db-connector-mule-4:get-document
+			doc:name="Get Document" doc:id="e4de4616-2ebd-4230-a760-cb8b8f9ac1ef"
+			config-ref="Azure_Cosmos_Db_Key_Token_Config"
+			dbIdUriParam="knauf-mule-dev-task" collIdUriParam="Container1"
+			docIdUriParam="#[vars.customerId]" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="ed2e94a2-3bd3-4376-8cba-835aa4f9b73c">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/get-customer-by-id-response-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Customer Retrieved"
+			doc:id="d7ec16e9-21ae-47e2-b026-621ced521c8d"
+			message='#["Customer with ID " ++ (attributes.uriParams.customerId default "") ++ " retrieved from CosmosDB successfully"]' />
+	</flow>
+	<flow name="cosmosdb-put-customers-by-id"
+		doc:id="c11941f9-ab6c-4d20-a469-de335b0d1ed7">
+		<logger level="INFO" doc:name="Updating customer"
+			doc:id="4f0c2583-b153-4663-86b8-316407250f16"
+			message='#["Updating Customer with ID " ++ (vars.customerId default "") ++ " in CosmosDB"]' />
+		<ee:transform doc:name="Set request payload"
+			doc:id="04a1ee49-a35d-4a6f-9c69-814e476f98a5">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/cosmosdb/put-customers-by-id-request-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<azure-cosmos-db-connector-mule-4:replace-document
+			doc:name="Replace Document"
+			doc:id="0c09ecb7-7abd-4150-9f3e-9454496c3aae"
+			config-ref="Azure_Cosmos_Db_Key_Token_Config"
+			dbIdUriParam="knauf-mule-dev-task" collIdUriParam="Container1"
+			docIdUriParam="#[vars.customerId]" />
+		<logger level="INFO" doc:name="Customer updated"
+			doc:id="15612f07-433c-41ff-a300-ca467242b8b2"
+			message='#["Customer with ID " ++ (vars.customerId default "") ++ " updated in CosmosDB successfully"]' />
+	</flow>
+	<flow name="cosmosdb-post-customers"
+		doc:id="4f735a85-b3d2-4cf3-9cd9-1e93a6e5fe08">
+		<logger level="INFO" doc:name="Creating Customer"
+			doc:id="e1212dcf-ce71-49d2-83f0-90c6daa18d64"
+			message='#["Creating new Customer with ID " ++ (vars.customerId default "") ++ " in CosmosDB"]' />
+		<ee:transform doc:name="Set request payload"
+			doc:id="c9453db8-1820-441b-8f99-dc4c52bd88ab">
+			<ee:message>
+				<ee:set-payload
+					resource="mappings/cosmosdb/post-customer-request-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<azure-cosmos-db-connector-mule-4:create-document
+			doc:name="Create Document"
+			doc:id="48f4b3d7-f57c-410c-b7b9-042340e4d4bc"
+			config-ref="Azure_Cosmos_Db_Key_Token_Config"
+			dbIdUriParam="knauf-mule-dev-task" collIdUriParam="Container1" />
+		<logger level="INFO" doc:name="Customer Created"
+			doc:id="6687766a-fd64-4709-acb3-8e7dc521ce2f"
+			message='#["Customer with ID " ++ (vars.customerId default "") ++ " created in CosmosDB successfully"]' />
+	</flow>
+</mule>

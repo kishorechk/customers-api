@@ -1,0 +1,29 @@
+#%RAML 1.0 Library
+types:
+  Address:
+    properties:
+      street: string
+      houseNumber: number
+      city: string
+      country: string
+      postalCode: string
+  PersonalInformation:
+    properties:
+      firstName: string
+      lastName: string
+      companyName: string
+      email: string
+      phone: string
+  Customer:
+    properties:
+      customerId: string
+      personalInformation: PersonalInformation
+      address: Address[]
+  CustomerNew:
+    properties:
+      personalInformation: PersonalInformation
+      address: Address[]
+  Error:
+    properties:
+      code: integer
+      message: string
