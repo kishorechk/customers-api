@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_4f735a85_b3d2_4cf3_9cd9_1e93a6e5fe08_Output_Payload = {
+  "_attachments"?: String, 
+  "_rid"?: String, 
+  "_self"?: String, 
+  "_etag"?: String, 
+  "_ts"?: String, 
+  _?: Any
+} {"description": "Successful response for creating a document."}
+

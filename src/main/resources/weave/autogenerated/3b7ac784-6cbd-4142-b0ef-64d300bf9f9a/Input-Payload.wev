@@ -1,0 +1,16 @@
+%dw 2.0
+
+type auto_3b7ac784_6cbd_4142_b0ef_64d300bf9f9a_Input_Payload = {
+  address: Array<{    country: String,     city: String,     street: String,     postalCode: String,     houseNumber: Number,     _?: Any  }>, 
+  personalInformation: {
+    firstName: String, 
+    lastName: String, 
+    phone: String, 
+    companyName: String, 
+    email: String, 
+    _?: Any
+  }, 
+  customerId: String, 
+  _?: Any
+}
+

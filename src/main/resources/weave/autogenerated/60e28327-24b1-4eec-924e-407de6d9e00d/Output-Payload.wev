@@ -1,0 +1,15 @@
+%dw 2.0
+
+type auto_60e28327_24b1_4eec_924e_407de6d9e00d_Output_Payload = Array<{  address: Array<{    country: String,     city: String,     street: String,     postalCode: String,     houseNumber: Number,     _?: Any  }>, 
+  personalInformation: {
+    firstName: String, 
+    lastName: String, 
+    phone: String, 
+    companyName: String, 
+    email: String, 
+    _?: Any
+  }, 
+  customerId: String, 
+  _?: Any
+}>
+
