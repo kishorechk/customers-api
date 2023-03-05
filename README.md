@@ -14,7 +14,6 @@ only 1 API is enough (i.e. Customer API)
 Customer API is responsible for customer id generation (GUID)
 
 #### REST Endpoints
-* GET customers
 * GET customer by Id
 * POST customers
 * PUT customer by Id

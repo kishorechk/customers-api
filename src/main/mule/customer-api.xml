@@ -47,11 +47,6 @@
 			name="put-customer-by-id-flow" />
 		<logger level="INFO" doc:name="Customer updated" doc:id="ef98ac46-2f2f-4442-8a56-5bc97d9d5705" message="#[&quot;Customer with ID &quot; ++ (vars.customerId default &quot;&quot;) ++ &quot; updated successfully&quot;]" />
 	</flow>
-	<flow name="get:\customers:customer-api-config">
-		<flow-ref doc:name="Flow Reference"
-			doc:id="12b60869-fd67-4b6c-af91-44e3f816e8bf"
-			name="get-customers-flow" />
-	</flow>
 	<flow name="get:\customers\(customerId):customer-api-config">
 		<logger level="INFO" doc:name="Retrieving Customer" doc:id="1d3598b4-7f57-41dd-82de-cfac681678a7" message="#[&quot;Retrieving Customer with ID &quot; ++ (attributes.uriParams.customerId default &quot;&quot;)]" />
 		<flow-ref doc:name="Flow Reference"

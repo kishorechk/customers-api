@@ -6,12 +6,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<flow name="get-customers-flow"
-		doc:id="b7a16f86-f2e7-42da-983a-c20c627153aa">
-		<flow-ref doc:name="Flow Reference"
-			doc:id="58355519-866c-4063-ac6d-fa8aa5ebbcab"
-			name="cosmosdb-get-customers" />
-	</flow>
 	<flow name="get-customer-by-id-flow"
 		doc:id="3b7ac784-6cbd-4142-b0ef-64d300bf9f9a">
 		<flow-ref doc:name="Flow Reference"

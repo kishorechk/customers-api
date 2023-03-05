@@ -9,21 +9,7 @@
 http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4 http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4/current/mule-azure-cosmos-db-connector-mule-4.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-	<flow name="cosmosdb-get-customers"
-		doc:id="60e28327-24b1-4eec-924e-407de6d9e00d">
-		<azure-cosmos-db-connector-mule-4:list-documents
-			doc:name="List Documents"
-			doc:id="778fff23-e3e6-4691-a480-8a3e6f94907c"
-			config-ref="Azure_Cosmos_Db_Key_Token_Config"
-			dbIdUriParam="knauf-mule-dev-task" collIdUriParam="Container1" />
-		<ee:transform doc:name="Transform Message"
-			doc:id="ec3ae321-e445-4217-a50c-7002deed1bee">
-			<ee:message>
-				<ee:set-payload
-					resource="mappings/get-customers-response-payload.dwl" />
-			</ee:message>
-		</ee:transform>
-	</flow>
+
 	<flow name="cosmosdb-get-customer-by-id"
 		doc:id="bf29dba8-db4e-46ff-9644-e9917ffb63c4">
 		<logger level="INFO" doc:name="Retrieving Customer"
